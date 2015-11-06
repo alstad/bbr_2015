@@ -7,7 +7,7 @@ $(document).ready(function() {
 	lastMessageSeqNo = 0;
 	lastMessageReceived = "";
 	receiveMessages();
-	setInterval(function(){ receiveMessages(); }, 3000);
+	setInterval(function(){ receiveMessages(); }, 2000);
 });
 
 function receiveMessages() {
@@ -17,10 +17,24 @@ function receiveMessages() {
 		$.each(messages.meldinger.reverse(), function(index, msg) {
 			console.log("Message received: ", msg);
 			lastMessageSeqNo = msg.sekvens;
-			addMessageToLog(true, msg.deltaker +": " +msg.melding);
+			addMessageToLog(true, getRealName(msg.deltaker) +": " +msg.melding);
 			lastMessageReceived = msg.tidspunktUtc;
+			$('#lastMsgTimestamp').html(lastMessageReceived);
 		});
 	});
+}
+
+function getRealName(deltakerId) {
+	switch (deltakerId) {
+		case "JAVA_3-1":
+			return "Aina";
+		case "JAVA_3-2":
+			return "Scott";
+		case "JAVA_3-3":
+			return "Anders"
+		default:
+			return deltakerId;
+	}
 }
 
 function addMessageToLog(incoming, message) {
@@ -42,6 +56,6 @@ $("#messageform").submit(function(event) {
 	postToServer(messageUrl, json);
 
 	$("#messagetext").val("");
-	addMessageToLog(false, message);
+	//addMessageToLog(false, message);
 	event.preventDefault();
 });
