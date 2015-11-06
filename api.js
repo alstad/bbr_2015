@@ -1,8 +1,4 @@
-//FB var messageServer;
-
-// http://bouvet-code-camp.azurewebsites.net/swagger/ui/index.html#!/PifGame
-//var teamId = "90d44d2a-44ef-4cbf-8f49-6e6a829e87d0";
-var teamId = "175";
+var teamId = "duppene_dupper_i_takt";
 var serverUrl = "https://bbr2015.azurewebsites.net/api/";
 var gameStateUrl = "GameStateFeed";
 var messageUrl = serverUrl + "Meldinger";
@@ -14,7 +10,7 @@ function postToServer(url, json) {
 	$.ajax({
 		type: "POST",
 		url: url,
-		beforeSend: function(xhr){xhr.setRequestHeader('LagKode', 'duppene_dupper_i_takt');xhr.setRequestHeader('DeltakerKode', currentUser());},
+		beforeSend: function(xhr){xhr.setRequestHeader('LagKode', teamId);xhr.setRequestHeader('DeltakerKode', currentUser());},
 		data: JSON.stringify(json),
 		contentType: "application/json; charset=utf-8",
 		crossDomain: true,
@@ -63,6 +59,7 @@ function currentUser()
 function debug(message) {
 	var oldDebug = $('#debug-messages').html();
 	$('#debug-messages').html(message + "<br>" + oldDebug);
+	console.log(message);
 }
 
 
