@@ -28,7 +28,7 @@ function getFromServer(url, success) {
 	$.ajax({
 		type: "GET",
 		url: url,
-		beforeSend: function(xhr){xhr.setRequestHeader('LagKode', 'duppene_dupper_i_takt');xhr.setRequestHeader('DeltakerKode', currentUser());},
+		beforeSend: function(xhr){xhr.setRequestHeader('LagKode', teamId);xhr.setRequestHeader('DeltakerKode', currentUser());},
 		crossDomain: true,
     	dataType: 'json',
     	//async: false,
