@@ -26,6 +26,24 @@ function getCurrentPositionAsJson(position) {
 	return {"Longitude": currentPosition.coords.longitude, "Latitude": currentPosition.coords.latitude, "X": 0, "Y": 0};
 }
 
+//  Source: https://gist.github.com/anderser/332187
+function StatkartMapType(name, layer) {
+    this.layer = layer
+    this.name = name
+    this.alt = name
+    this.tileSize = new google.maps.Size(256,256);
+    this.maxZoom = 19;
+    this.getTile = function(coord, zoom, ownerDocument) {
+        var div = ownerDocument.createElement('DIV');
+        div.style.width = this.tileSize.width + 'px';
+        div.style.height = this.tileSize.height + 'px';
+        div.style.backgroundImage = "url(http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=" + this.layer + "&zoom=" + zoom + "&x=" + coord.x + "&y=" + coord.y + ")";
+        return div;
+    };
+}
+
+var STATKART_MAP_TYPE_ID = "topo2";
+
 function getCurrentPosition(position) {
 	var s = document.querySelector('#status');
 
@@ -51,9 +69,10 @@ function getCurrentPosition(position) {
 		center: latlng,
 		mapTypeControl: false,
 		navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
-		mapTypeId: google.maps.MapTypeId.ROADMAP
 	};
 	var map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
+	map.mapTypes.set(STATKART_MAP_TYPE_ID, new StatkartMapType("Topografisk", STATKART_MAP_TYPE_ID));
+	map.setMapTypeId(STATKART_MAP_TYPE_ID);
 
 	var icon = {
 		url: 'markers/image.png',
