@@ -5,9 +5,8 @@
 var teamId = "175";
 var serverUrl = "https://bbr2015.azurewebsites.net/api/";
 var gameStateUrl = "GameStateFeed";
-var codeUrl = serverUrl + "/api/game/pif/sendpostkode";
+var messageUrl = serverUrl + "Meldinger";
 var positionUrl = serverUrl + "/api/game/pif/sendpifposisjon";
-var messagesUrl = serverUrl + "/api/game/pif/hentmeldinger";
 
 	// TESTING cross server
 	getFromServer(serverUrl + gameStateUrl, function(messages) {
@@ -25,6 +24,7 @@ function postToServer(url, json) {
 	$.ajax({
 		type: "POST",
 		url: url,
+		beforeSend: function(xhr){xhr.setRequestHeader('LagKode', 'duppene_dupper_i_takt');xhr.setRequestHeader('DeltakerKode', '92017563');},
 		data: JSON.stringify(json),
 		contentType: "application/json; charset=utf-8",
 		crossDomain: true,
