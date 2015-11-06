@@ -2,6 +2,7 @@ var teamId = "duppene_dupper_i_takt";
 var serverUrl = "https://bbr2015.azurewebsites.net/api/";
 var gameStateUrl = "GameStateFeed";
 var messageUrl = serverUrl + "Meldinger";
+var registerPostUrl = serverUrl + "GameService/RegistrerNyPost"
 var positionUrl = serverUrl + "/api/game/pif/sendpifposisjon";
 
 function postToServer(url, json) {
