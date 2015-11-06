@@ -1,30 +1,13 @@
 var oldMessages;
 
 $(document).ready(function() {
-    //FB console.log("Starting polling Firebase");
-	//FB messageServer = new Firebase('https://popping-inferno-8097.firebaseio.com/');
-	//FB messageServer.set('sending data');
-	//FB messageServer.push({name: 'aina', text: 'sending something'});
-	//FB messageServer.push({name: name, text: text});
-	//FB messageServer.push({name: 'aina', text: 'sending something more...'});
-
-	// added, changed, removed, moved
-	//FB messageServer.limit(10).on('child_added', receiveMessage);
 	console.log("Starting polling base server...");
-
 
 	oldMessages = new Array();
 	receiveMessage();
 	setInterval(function(){ receiveMessage(); }, 5000);
 });
 
-/*FB function receiveMessage(snapshot) {
-	var message = snapshot.val();
-	if (message.sender == 'basestation') {
-		console.log("message", message);
-		addMessageToLog(true, message.value);
-	}
-}*/
 function receiveMessage() {
 	//console.log("Polling server...");
 	/*getFromServer(messagesUrl + "/" + teamId, function(messages) {

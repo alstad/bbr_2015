@@ -21,7 +21,6 @@ var messagesUrl = serverUrl + "/api/game/pif/hentmeldinger";
 function postToServer(url, json) {
 	//console.log("url", url);
 	//console.log("json", json);
-	//FB messageServer.push(json);
 	$.ajax({
 		type: "POST",
 		url: url,

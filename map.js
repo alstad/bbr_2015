@@ -1,7 +1,6 @@
 var marker;
 var currentPosition;
 
-
 if (navigator.geolocation) {
 	navigator.geolocation.getCurrentPosition(getCurrentPosition, error);
 	navigator.geolocation.watchPosition(watchPosition, error);
@@ -17,7 +16,6 @@ function watchPosition(position) {
 	var positionString = "position: " + position.coords.latitude + ", " + position.coords.longitude;
 	debug(positionString);
 	var json = {"Posisjon": getCurrentPositionAsJson(currentPosition), "LagId": teamId};
-	//FB var json = {sender: 'mobile', type: 'coordinates', value: position.coords.latitude + ", " + position.coords.longitude};
 	//postToServer(positionUrl, json);
 }
 
