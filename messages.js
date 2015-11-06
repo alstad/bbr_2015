@@ -1,50 +1,40 @@
-var oldMessages;
+var lastMessageSeqNo;
+var lastMessageReceived;
 
 $(document).ready(function() {
 	console.log("Starting polling base server...");
 
-	oldMessages = new Array();
-	receiveMessage();
-	setInterval(function(){ receiveMessage(); }, 5000);
+	lastMessageSeqNo = 0;
+	lastMessageReceived = "";
+	receiveMessages();
+	setInterval(function(){ receiveMessages(); }, 2000);
 });
 
-function receiveMessage() {
-	//console.log("Polling server...");
-	/*getFromServer(messagesUrl + "/" + teamId, function(messages) {
-		//console.log("Message received...");
-		//console.log("messages", messages);
-		$.each(messages, function(index, message) {
-			if ($.inArray(message.tid, oldMessages) < 0) {
-				console.log("New message received!");
-				console.log("message", message);
-				// 'Ingen' or 'Fritekst' or 'Lengde' or 'Himmelretning' or 'Stopp'
-				switch (message.type) {
-					case 'Lengde':
-					case 2:
-						addMessageToLog(true, "Lengde: " + message.tekst);
-						break;
-					case 'Himmelretning':
-					case 3:
-						addMessageToLog(true, "Himmelretning: " + message.tekst);
-						break;
-					case 'Stopp':
-					case 4:
-						addMessageToLog(true, "Stopp! " + message.tekst);
-						break;
-					case 'Ingen':
-					case 'Fritekst':
-					case 0:
-					case 1:
-					default:
-						addMessageToLog(true, message.tekst);
-						break;
-				}
-				oldMessages[oldMessages.length] = message.tid;
-			//} else {
-			//	console.log("No new message received");
-			}
+function receiveMessages() {
+	console.log("Polling server...");
+	getFromServer(messageUrl +"/" + lastMessageSeqNo, function(messages) {
+		console.log("Message received", messages.meldinger);
+		$.each(messages.meldinger.reverse(), function(index, msg) {
+			console.log("Message received: ", msg);
+			lastMessageSeqNo = msg.sekvens;
+			addMessageToLog(true, getRealName(msg.deltaker) +": " +msg.melding);
+			lastMessageReceived = msg.tidspunktUtc;
+			$('#lastMsgTimestamp').html(lastMessageReceived);
 		});
-	});*/
+	});
+}
+
+function getRealName(deltakerId) {
+	switch (deltakerId) {
+		case "JAVA_3-1":
+			return "Aina";
+		case "JAVA_3-2":
+			return "Scott";
+		case "JAVA_3-3":
+			return "Anders"
+		default:
+			return deltakerId;
+	}
 }
 
 function addMessageToLog(incoming, message) {
@@ -58,14 +48,14 @@ function addMessageToLog(incoming, message) {
 	var messageLog = $('#message-log').html();
 	$('#message-log').html(append + messageLog);
 }
+
 $("#messageform").submit(function(event) {
-	var post = $("#post").val();
-	var code = $("#code").val();
-	debug(post + ": " + code);
-	var json = {"Kode": code, "Postnummer": post, "LagId": teamId, "Koordinat": getCurrentPositionAsJson()};
-	postToServer(codeUrl, json);
+	var message = $("#message").val();
+	debug(message + ": " + message);
+	var json = {"tekst":message};
+	postToServer(messageUrl, json);
 
 	$("#messagetext").val("");
-	addMessageToLog(false, post + ": " + code);
+	//addMessageToLog(false, message);
 	event.preventDefault();
 });

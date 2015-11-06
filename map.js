@@ -1,3 +1,4 @@
+var map;
 var marker;
 var currentPosition;
 
@@ -6,6 +7,33 @@ if (navigator.geolocation) {
 	navigator.geolocation.watchPosition(watchPosition, error);
 } else {
 	error('not supported');
+}
+
+var markersArray = [];
+function showPosts() {
+	var posts = getPosts();
+	console.log(posts);
+	if (posts && map) {
+		for (var i = 0; i < markersArray.length; i++ ) {
+    		markersArray[i].setMap(null);
+  		}
+  		markersArray.length = 0;
+
+		$.each(posts, function(id, post) {
+		 	var color = post.harRegistert == true ? "green" : "red";
+			var marker = new MarkerWithLabel({
+			   position: {lat: post.latitude, lng: post.longitude},
+		       map: map,
+		       draggable: false,
+       			raiseOnDrag: false,
+		       labelContent: post.poengVerdi + " poeng",
+		       labelAnchor: new google.maps.Point(22, 10),
+		       labelClass: "labels",
+		       labelStyle: {'color': color} // 'opacity': '1.0',
+		    });
+		  markersArray.push(marker);
+		});
+	}
 }
 
 function watchPosition(position) {
@@ -70,7 +98,7 @@ function getCurrentPosition(position) {
 		mapTypeControl: false,
 		navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
 	};
-	var map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
+	map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
 	map.mapTypes.set(STATKART_MAP_TYPE_ID, new StatkartMapType("Topografisk", STATKART_MAP_TYPE_ID));
 	map.setMapTypeId(STATKART_MAP_TYPE_ID);
 
