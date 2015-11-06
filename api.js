@@ -20,7 +20,6 @@ var positionUrl = serverUrl + "/api/game/pif/sendpifposisjon";
 function postToServer(url, json) {
 	//console.log("url", url);
 	//console.log("json", json);
-	//FB messageServer.push(json);
 	$.ajax({
 		type: "POST",
 		url: url,

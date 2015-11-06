@@ -2,7 +2,7 @@ var lastMessageSeqNo;
 var lastMessageReceived;
 
 $(document).ready(function() {
-    //FB console.log("Starting polling Firebase");
+	//FB console.log("Starting polling Firebase");
 	//FB messageServer = new Firebase('https://popping-inferno-8097.firebaseio.com/');
 	//FB messageServer.set('sending data');
 	//FB messageServer.push({name: 'aina', text: 'sending something'});
@@ -21,12 +21,12 @@ $(document).ready(function() {
 });
 
 /*FB function receiveMessage(snapshot) {
-	var message = snapshot.val();
-	if (message.sender == 'basestation') {
-		console.log("message", message);
-		addMessageToLog(true, message.value);
-	}
-}*/
+ var message = snapshot.val();
+ if (message.sender == 'basestation') {
+ console.log("message", message);
+ addMessageToLog(true, message.value);
+ }
+ }*/
 function receiveMessages() {
 	console.log("Polling server...");
 	getFromServer(messageUrl +"/" + lastMessageSeqNo, function(messages) {
