@@ -8,22 +8,13 @@ var gameStateUrl = "GameStateFeed";
 var messageUrl = serverUrl + "Meldinger";
 var positionUrl = serverUrl + "/api/game/pif/sendpifposisjon";
 
-	// TESTING cross server
-	getFromServer(serverUrl + gameStateUrl, function(messages) {
-		//console.log("Message received...");
-		//console.log("messages", messages);
-		$.each(messages, function(index, message) {
-			debug(message);
-		});
-	});
-
 function postToServer(url, json) {
 	//console.log("url", url);
 	//console.log("json", json);
 	$.ajax({
 		type: "POST",
 		url: url,
-		beforeSend: function(xhr){xhr.setRequestHeader('LagKode', 'duppene_dupper_i_takt');xhr.setRequestHeader('DeltakerKode', '92017563');},
+		beforeSend: function(xhr){xhr.setRequestHeader('LagKode', 'duppene_dupper_i_takt');xhr.setRequestHeader('DeltakerKode', currentUser());},
 		data: JSON.stringify(json),
 		contentType: "application/json; charset=utf-8",
 		crossDomain: true,
@@ -41,7 +32,7 @@ function getFromServer(url, success) {
 	$.ajax({
 		type: "GET",
 		url: url,
-		beforeSend: function(xhr){xhr.setRequestHeader('LagKode', 'duppene_dupper_i_takt');xhr.setRequestHeader('DeltakerKode', '92017563');},
+		beforeSend: function(xhr){xhr.setRequestHeader('LagKode', 'duppene_dupper_i_takt');xhr.setRequestHeader('DeltakerKode', currentUser());},
 		crossDomain: true,
     	dataType: 'json',
     	//async: false,
@@ -54,6 +45,21 @@ function getFromServer(url, success) {
       	}
 	});
 }
+
+function currentUser()
+{
+	var sPageURL = window.location.search.substring(1);
+	var sURLVariables = sPageURL.split('&');
+	for (var i = 0; i < sURLVariables.length; i++)
+	{
+		var sParameterName = sURLVariables[i].split('=');
+		if (sParameterName[0] == "tlf")
+		{
+			return sParameterName[1];
+		}
+	}
+}
+
 function debug(message) {
 	var oldDebug = $('#debug-messages').html();
 	$('#debug-messages').html(message + "<br>" + oldDebug);
@@ -80,3 +86,5 @@ function error(error) {
 				break;
 		}
 }
+
+
