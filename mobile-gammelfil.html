@@ -1,0 +1,339 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="shortcut icon" href="http://www.bouvet.no/Static/img/favicon32.ico" />
+	<link rel="apple-touch-icon" href="http://www.bouvet.no/Static/img/favicon57.png" />
+	<link rel="apple-touch-icon" sizes="72x72" href="http://www.bouvet.no/Static/img/favicon72.png" />
+	<link rel="apple-touch-icon" sizes="114x114" href="http://www.bouvet.no/Static/img/favicon114.png" />
+	<link rel="apple-touch-icon" sizes="144x144" href="http://www.bouvet.no/Static/img/favicon144.png" />
+
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+
+	<!-- Bootplus -->
+	<link href="bootplus/css/bootplus.min.css" rel="stylesheet" media="screen">
+	<link href="bootplus/css/bootplus-responsive.min.css" rel="stylesheet" media="screen">
+	<!--[if IE 7]>
+	<link rel="stylesheet" href="bootplus/css/bootplus-ie7.min.css">
+	<![endif]-->
+
+	<style>
+		.last-message {
+			color: #E18700;
+			font-face: bold;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container-fluid">
+				<span class="brand">Bouvet Battle Royal</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+
+		<div class="row-fluid">
+
+			<!-- Send message -->
+			<div class="span4">
+				<div class="card">
+					<h2 class="card-heading simple">Messages</h2>
+					<div class="card-body">
+				<p>
+					<form class="form-inline" id="messageform">
+						<div class="input-append" style="width:100%">
+							<input class="span1" id="post" type="text" placeholder="Post number" style="width:45%">
+							<input class="span1" id="code" type="text" placeholder="Code" style="width:45%">
+							<button class="btn" id="sendmessage">OK</button>
+						</div>
+					</form>
+				</p>
+				<p>
+					<div id="message-log"></div>
+				</p>
+					</div>
+				 </div>
+			</div><!--/span-->
+
+			<!-- Map -->
+			<div class="span4">
+				 <div class="card">
+					<h2 class="card-heading simple">My position</h2>
+				<div class="card-body">
+					<article>
+						<p>Finding your location: <span id="status">checking...</span></p>
+					</article>
+				</div>
+				 </div>
+			</div><!--/span-->
+
+
+			<!-- debug -->
+			<!--<div class="span4" style="display: none">-->
+			<div class="span4">
+				<div class="card">
+					<h2 class="card-heading simple">Debug panel</h2>
+					<div class="card-body">
+				<p><div id="debug-messages"></div></p>
+					</div>
+				</div>
+			</div><!--/span-->
+
+		</div><!--/row-->
+
+		<hr>
+
+		<footer>
+			<p>&copy; Bouvet 2014</p>
+		</footer>
+
+	</div><!--/.fluid-container-->
+
+	<script src="https://code.jquery.com/jquery.js"></script>
+	<script src="bootplus/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
+
+	<!--FB <script src='https://cdn.firebase.com/js/client/1.0.15/firebase.js'></script>-->
+<script>
+//FB var messageServer;
+var marker;
+var currentPosition;
+var oldMessages;
+
+// http://bouvet-code-camp.azurewebsites.net/swagger/ui/index.html#!/PifGame
+//var teamId = "90d44d2a-44ef-4cbf-8f49-6e6a829e87d0";
+var teamId = "175";
+var serverUrl = "https://bbr2015.azurewebsites.net/api/GameStateFeed";
+var codeUrl = serverUrl + "/api/game/pif/sendpostkode";
+var positionUrl = serverUrl + "/api/game/pif/sendpifposisjon";
+var messagesUrl = serverUrl + "/api/game/pif/hentmeldinger";
+
+$(document).ready(function() {
+    //FB console.log("Starting polling Firebase");
+	//FB messageServer = new Firebase('https://popping-inferno-8097.firebaseio.com/');
+	//FB messageServer.set('sending data');
+	//FB messageServer.push({name: 'aina', text: 'sending something'});
+	//FB messageServer.push({name: name, text: text});
+	//FB messageServer.push({name: 'aina', text: 'sending something more...'});
+
+	// added, changed, removed, moved
+	//FB messageServer.limit(10).on('child_added', receiveMessage);
+	console.log("Starting polling base server...");
+	oldMessages = new Array();
+	receiveMessage();
+	setInterval(function(){ receiveMessage(); }, 5000);
+});
+
+/*FB function receiveMessage(snapshot) {
+	var message = snapshot.val();
+	if (message.sender == 'basestation') {
+		console.log("message", message);
+		addMessageToLog(true, message.value);
+	}
+}*/
+function receiveMessage() {
+	//console.log("Polling server...");
+	getFromServer(messagesUrl + "/" + teamId, function(messages) {
+		//console.log("Message received...");
+		//console.log("messages", messages);
+		$.each(messages, function(index, message) {
+			if ($.inArray(message.tid, oldMessages) < 0) {
+				console.log("New message received!");
+				console.log("message", message);
+				// 'Ingen' or 'Fritekst' or 'Lengde' or 'Himmelretning' or 'Stopp'
+				switch (message.type) {
+					case 'Lengde':
+					case 2:
+						addMessageToLog(true, "Lengde: " + message.tekst);
+						break;
+					case 'Himmelretning':
+					case 3:
+						addMessageToLog(true, "Himmelretning: " + message.tekst);
+						break;
+					case 'Stopp':
+					case 4:
+						addMessageToLog(true, "Stopp! " + message.tekst);
+						break;
+					case 'Ingen':
+					case 'Fritekst':
+					case 0:
+					case 1:
+					default:
+						addMessageToLog(true, message.tekst);
+						break;
+				}
+				oldMessages[oldMessages.length] = message.tid;
+			//} else {
+			//	console.log("No new message received");
+			}
+		});
+	});
+}
+
+function addMessageToLog(incoming, message) {
+	var append;
+	if (incoming) {
+		$('.last-message').removeClass('last-message');
+		append = "<div class='last-message'>&gt; " + message + "</div>";
+	} else {
+		append = "<div>&lt; " + message + "</div>";
+	}
+	var messageLog = $('#message-log').html();
+	$('#message-log').html(append + messageLog);
+}
+
+function watchPosition(position) {
+	currentPosition = position;
+	var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+	marker.setPosition(latlng);
+
+	var positionString = "position: " + position.coords.latitude + ", " + position.coords.longitude;
+	debug(positionString);
+	var json = {"Posisjon": getCurrentPositionAsJson(currentPosition), "LagId": teamId};
+	//FB var json = {sender: 'mobile', type: 'coordinates', value: position.coords.latitude + ", " + position.coords.longitude};
+	postToServer(positionUrl, json);
+}
+
+$("#messageform").submit(function(event) {
+	var post = $("#post").val();
+	var code = $("#code").val();
+	debug(post + ": " + code);
+	var json = {"Kode": code, "Postnummer": post, "LagId": teamId, "Koordinat": getCurrentPositionAsJson()};
+	postToServer(codeUrl, json);
+
+	$("#messagetext").val("");
+	addMessageToLog(false, post + ": " + code);
+	event.preventDefault();
+});
+
+function postToServer(url, json) {
+	//console.log("url", url);
+	//console.log("json", json);
+	//FB messageServer.push(json);
+	$.ajax({
+		type: "POST",
+		url: url,
+		data: JSON.stringify(json),
+		contentType: "application/json; charset=utf-8",
+		crossDomain: true,
+    	dataType: 'json',
+      	/*error: function (request, status, error) {
+      		console.log("post-request", request);
+      		console.log("post-responseText", request.responseText);
+      		console.log("post-status", status);
+      		console.log("post-error", error);
+      	}*/
+	});
+}
+function getFromServer(url, success) {
+	//console.log("url", url);
+	$.ajax({
+		type: "GET",
+		url: url,
+		crossDomain: true,
+    	dataType: 'json',
+    	//async: false,
+    	success: success,
+      	error: function (request, status, error) {
+      		console.log("get-request", request);
+      		console.log("get-responseText", request.responseText);
+      		console.log("get-status", status);
+      		console.log("get-error", error);
+      	}
+	});
+}
+function debug(message) {
+	var oldDebug = $('#debug-messages').html();
+	$('#debug-messages').html(message + "<br>" + oldDebug);
+}
+
+if (navigator.geolocation) {
+	navigator.geolocation.getCurrentPosition(getCurrentPosition, error);
+	navigator.geolocation.watchPosition(watchPosition, error);
+} else {
+	error('not supported');
+}
+
+function getCurrentPositionAsJson(position) {
+	if (typeof position != 'undefined') {
+		currentPosition = position;
+	}
+	return {"Longitude": currentPosition.coords.longitude, "Latitude": currentPosition.coords.latitude, "X": 0, "Y": 0};
+}
+
+function getCurrentPosition(position) {
+	var s = document.querySelector('#status');
+
+	if (s.className == 'success') {
+		// not sure why we're hitting this twice in FF, I think it's to do with a cached result coming back
+		return;
+	}
+
+	s.innerHTML = "found you!";
+	s.className = 'success';
+
+	var mapcanvas = document.createElement('div');
+	mapcanvas.id = 'mapcanvas';
+	mapcanvas.style.height = '400px';
+	mapcanvas.style.width = '100%';
+	mapcanvas.style.margin = '0 0 20px 0';
+
+	document.querySelector('article').appendChild(mapcanvas);
+
+	var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+	var myOptions = {
+		zoom: 15,
+		center: latlng,
+		mapTypeControl: false,
+		navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+	var map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
+
+	var icon = {
+		url: 'markers/image.png',
+		size: new google.maps.Size(32, 32),
+		origin: new google.maps.Point(0,0),
+		anchor: new google.maps.Point(16, 7)
+	};
+	var shape = {
+		coords: [18,0,18,1,18,2,18,3,18,4,18,5,19,8,19,9,19,10,19,11,19,12,19,13,19,14,19,15,19,16,19,17,17,18,17,19,24,20,26,21,28,22,29,23,29,24,29,25,29,26,29,27,29,28,28,29,26,30,24,31,7,31,5,30,3,29,2,28,2,27,2,26,2,25,2,24,2,23,3,22,5,21,7,20,14,19,14,18,12,17,12,16,12,15,12,14,12,13,12,12,12,11,12,10,12,9,12,8,13,5,13,4,13,3,13,2,13,1,13,0],
+		type: 'poly'
+	};
+
+	marker = new google.maps.Marker({
+			position: latlng,
+			map: map,
+			icon: icon,
+			shape: shape,
+			title:"You are here! (at least within a "+position.coords.accuracy+" meter radius)"
+	});
+}
+
+function error(error) {
+	var element = document.querySelector('#status');
+	element.innerHTML = typeof error == 'string' ? error : "failed";
+	element.className = 'fail';
+
+	switch(error.code) {
+		case error.PERMISSION_DENIED:
+				element.innerHTML = "User denied the request for Geolocation."
+				break;
+		case error.POSITION_UNAVAILABLE:
+				element.innerHTML = "Location information is unavailable."
+				break;
+		case error.TIMEOUT:
+				element.innerHTML = "The request to get user location timed out."
+				break;
+		case error.UNKNOWN_ERROR:
+				element.innerHTML = "An unknown error occurred."
+				break;
+		}
+}
+</script>
+</body>
