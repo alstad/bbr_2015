@@ -6,7 +6,7 @@
         $('#weapons').html("No weapons");
     } else {
         $.each(weapons, function(index, weapon) {
-            console.log("Weapon: ", weapon);
+            //console.log("Weapon: ", weapon);
             //$('#weapons').add("div");
             //$('#weapons').append("test");
             $('#weapons').append("<input type=\"radio\" name=\"vaapenId\" id=\"" + weapon.vaapenId  + "\" value=\"" +weapon.vaapenId  + "\"> " +weapon.vaapenId +":" +weapon.beskrivelse +"<br>");

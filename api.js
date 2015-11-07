@@ -73,9 +73,9 @@ function getRealName(deltakerId) {
 }
 
 function debug(message) {
-	var oldDebug = $('#debug-messages').html();
+	/*var oldDebug = $('#debug-messages').html();
 	$('#debug-messages').html(message + "<br>" + oldDebug);
-	console.log(message);
+	console.log(message);*/
 }
 
 
