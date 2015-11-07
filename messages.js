@@ -57,7 +57,7 @@ $("#messageform").submit(function(event) {
 	var json = {"tekst":message};
 	postToServer(messageUrl, json);
 
-	$("#messagetext").val("");
+	$("#message").val("");
 	//addMessageToLog(false, message);
 	event.preventDefault();
 });

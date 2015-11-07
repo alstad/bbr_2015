@@ -20,6 +20,7 @@ function receiveGameState() {
 		achievements = messages.achievements;
 
 		showPosts();
+		showWeapons(vaapen);
 		//setInterval(function(){ showPosts(); }, 5000);
 		$('#poengsum').html(score);
 	});
