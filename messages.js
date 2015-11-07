@@ -2,8 +2,6 @@ var lastMessageSeqNo;
 var lastMessageReceived;
 
 $(document).ready(function() {
-	console.log("Starting polling base server...");
-
 	lastMessageSeqNo = 0;
 	lastMessageReceived = "";
 	receiveMessages();
@@ -11,32 +9,17 @@ $(document).ready(function() {
 });
 
 function receiveMessages() {
-	console.log("Polling server...");
+	//console.log("Polling server...");
 	getFromServer(messageUrl +"/" + lastMessageSeqNo, function(messages) {
-		console.log("Message received", messages.meldinger);
+		//console.log("Message received", messages.meldinger);
 		$.each(messages.meldinger.reverse(), function(index, msg) {
-			console.log("Message received: ", msg);
+			//console.log("Message received: ", msg);
 			lastMessageSeqNo = msg.sekvens;
 			addMessageToLog(true, getRealName(msg.deltaker) +": " +msg.melding);
 			lastMessageReceived = msg.tidspunktUtc;
 			$('#lastMsgTimestamp').html(lastMessageReceived);
 		});
 	});
-}
-
-function getRealName(deltakerId) {
-	switch (deltakerId) {
-		case "JAVA_3-1":
-			return "Aina";
-		case "JAVA_3-2":
-			return "Scott";
-		case "JAVA_3-3":
-			return "Anders";
-		case "JAVA_3-4":
-			return "Atle";
-		default:
-			return deltakerId;
-	}
 }
 
 function addMessageToLog(incoming, message) {

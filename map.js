@@ -3,16 +3,58 @@ var marker;
 var currentPosition;
 
 if (navigator.geolocation) {
-	navigator.geolocation.getCurrentPosition(getCurrentPosition, error);
-	navigator.geolocation.watchPosition(watchPosition, error);
+	navigator.geolocation.getCurrentPosition(initMap, error);
+	navigator.geolocation.watchPosition(watchPosition, error, { enableHighAccuracy: true,timeout : 5000});
 } else {
 	error('not supported');
+}
+
+var icon = {
+		url: 'markers/image.png',
+		size: new google.maps.Size(32, 32),
+		origin: new google.maps.Point(0,0),
+		anchor: new google.maps.Point(16, 7)
+};
+var shape = {
+		coords: [18,0,18,1,18,2,18,3,18,4,18,5,19,8,19,9,19,10,19,11,19,12,19,13,19,14,19,15,19,16,19,17,17,18,17,19,24,20,26,21,28,22,29,23,29,24,29,25,29,26,29,27,29,28,28,29,26,30,24,31,7,31,5,30,3,29,2,28,2,27,2,26,2,25,2,24,2,23,3,22,5,21,7,20,14,19,14,18,12,17,12,16,12,15,12,14,12,13,12,12,12,11,12,10,12,9,12,8,13,5,13,4,13,3,13,2,13,1,13,0],
+		type: 'poly'
+};
+
+$(document).ready(function() {
+	receiveParticipantsPositions();
+	setInterval(function(){ receiveParticipantsPositions(); }, 5000);
+});
+
+var participantsArray = [];
+function receiveParticipantsPositions() {
+	getFromServer(positionUrl, function(participants) {
+		for (var i = 0; i < participantsArray.length; i++ ) {
+    		participantsArray[i].setMap(null);
+  		}
+  		participantsArray.length = 0;
+
+		$.each(participants, function(id, participant) {
+			var marker = new MarkerWithLabel({
+			   position: {lat: participant.latitude, lng: participant.longitude},
+		       map: map,
+		       draggable: false,
+       		   raiseOnDrag: false,
+		       labelContent: getRealName(participant.deltakerId),
+		       labelAnchor: new google.maps.Point(22, 0),
+		       labelClass: "labels",
+		       labelStyle: {'color': 'orange'}, // 'opacity': '1.0',
+				icon: icon,
+				shape: shape
+		    });
+			participantsArray.push(marker);
+		});
+	});
 }
 
 var markersArray = [];
 function showPosts() {
 	var posts = getPosts();
-	console.log(posts);
+	//console.log(posts);
 	if (posts && map) {
 		for (var i = 0; i < markersArray.length; i++ ) {
     		markersArray[i].setMap(null);
@@ -20,18 +62,19 @@ function showPosts() {
   		markersArray.length = 0;
 
 		$.each(posts, function(id, post) {
-		 	var color = post.harRegistert == true ? "green" : "red";
+		 	//var color = post.harRegistert == true ? "green" : "red";
+		 	var color = "red";
 			var marker = new MarkerWithLabel({
 			   position: {lat: post.latitude, lng: post.longitude},
 		       map: map,
 		       draggable: false,
-       			raiseOnDrag: false,
+       		   raiseOnDrag: false,
 		       labelContent: post.poengVerdi + " poeng",
 		       labelAnchor: new google.maps.Point(22, 10),
 		       labelClass: "labels",
-		       labelStyle: {'color': color} // 'opacity': '1.0',
+		       labelStyle: {'color': 'red'} // 'opacity': '1.0',
 		    });
-		  markersArray.push(marker);
+		  	markersArray.push(marker);
 		});
 	}
 }
@@ -43,22 +86,22 @@ function watchPosition(position) {
 
 	var positionString = "position: " + position.coords.latitude + ", " + position.coords.longitude;
 	debug(positionString);
-	var json = {"Posisjon": getCurrentPositionAsJson(currentPosition), "LagId": teamId};
-	//postToServer(positionUrl, json);
+	var json = getCurrentPositionAsJson(currentPosition);
+	postToServer(positionUrl, json);
 }
 
 function getCurrentPositionAsJson(position) {
 	if (typeof position != 'undefined') {
 		currentPosition = position;
 	}
-	return {"Longitude": currentPosition.coords.longitude, "Latitude": currentPosition.coords.latitude, "X": 0, "Y": 0};
+	return {"latitude": currentPosition.coords.latitude, "longitude": currentPosition.coords.longitude};
 }
 
 //  Source: https://gist.github.com/anderser/332187
 function StatkartMapType(name, layer) {
-    this.layer = layer
-    this.name = name
-    this.alt = name
+    this.layer = layer;
+    this.name = name;
+    this.alt = name;
     this.tileSize = new google.maps.Size(256,256);
     this.maxZoom = 19;
     this.getTile = function(coord, zoom, ownerDocument) {
@@ -72,7 +115,7 @@ function StatkartMapType(name, layer) {
 
 var STATKART_MAP_TYPE_ID = "topo2";
 
-function getCurrentPosition(position) {
+function initMap(position) {
 	var s = document.querySelector('#status');
 
 	if (s.className == 'success') {
@@ -101,17 +144,6 @@ function getCurrentPosition(position) {
 	map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
 	map.mapTypes.set(STATKART_MAP_TYPE_ID, new StatkartMapType("Topografisk", STATKART_MAP_TYPE_ID));
 	map.setMapTypeId(STATKART_MAP_TYPE_ID);
-
-	var icon = {
-		url: 'markers/image.png',
-		size: new google.maps.Size(32, 32),
-		origin: new google.maps.Point(0,0),
-		anchor: new google.maps.Point(16, 7)
-	};
-	var shape = {
-		coords: [18,0,18,1,18,2,18,3,18,4,18,5,19,8,19,9,19,10,19,11,19,12,19,13,19,14,19,15,19,16,19,17,17,18,17,19,24,20,26,21,28,22,29,23,29,24,29,25,29,26,29,27,29,28,28,29,26,30,24,31,7,31,5,30,3,29,2,28,2,27,2,26,2,25,2,24,2,23,3,22,5,21,7,20,14,19,14,18,12,17,12,16,12,15,12,14,12,13,12,12,12,11,12,10,12,9,12,8,13,5,13,4,13,3,13,2,13,1,13,0],
-		type: 'poly'
-	};
 
 	marker = new google.maps.Marker({
 			position: latlng,

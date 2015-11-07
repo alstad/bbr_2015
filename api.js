@@ -1,9 +1,9 @@
 var teamId = "duppene_dupper_i_takt";
 var serverUrl = "https://bbr2015.azurewebsites.net/api/";
-var gameStateUrl = "GameStateFeed";
+var gameStateUrl = serverUrl + "GameStateFeed";
 var messageUrl = serverUrl + "Meldinger";
 var registerPostUrl = serverUrl + "GameService/RegistrerNyPost"
-var positionUrl = serverUrl + "/api/game/pif/sendpifposisjon";
+var positionUrl = serverUrl + "PosisjonsService";
 
 function postToServer(url, json) {
 	//console.log("url", url);
@@ -54,6 +54,19 @@ function currentUser()
 		{
 			return sParameterName[1];
 		}
+	}
+}
+
+function getRealName(deltakerId) {
+	switch (deltakerId) {
+		case "JAVA_3-1":
+			return "Aina";
+		case "JAVA_3-2":
+			return "Scott";
+		case "JAVA_3-3":
+			return "Anders"
+		default:
+			return deltakerId;
 	}
 }
 
