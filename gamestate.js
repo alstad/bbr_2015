@@ -22,6 +22,7 @@ function receiveGameState() {
 		showPosts();
 		//setInterval(function(){ showPosts(); }, 5000);
 		$('#poengsum').html(score);
+		$('#ranking').html(ranking.rank);
 	});
 }
 
