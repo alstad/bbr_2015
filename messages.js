@@ -27,7 +27,7 @@ function receiveMessages() {
 	});
 }
 
-var snd = new Audio("pling.wav"); // buffers automatically when created
+var snd = new Audio("pling.mp3"); // buffers automatically when created
 function addMessageToLog(incoming, message, className, server) {
 	var append;
 	if (incoming) {
