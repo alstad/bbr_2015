@@ -28,6 +28,7 @@ $(document).ready(function() {
 var participantsArray = [];
 function receiveParticipantsPositions() {
 	getFromServer(positionUrl, function(participants) {
+		marker.setMap(null);
 		for (var i = 0; i < participantsArray.length; i++ ) {
     		participantsArray[i].setMap(null);
   		}
@@ -52,8 +53,7 @@ function receiveParticipantsPositions() {
 }
 
 var markersArray = [];
-function showPosts() {
-	var posts = getPosts();
+function showPosts(posts) {
 	//console.log(posts);
 	if (posts && map) {
 		for (var i = 0; i < markersArray.length; i++ ) {
@@ -62,17 +62,17 @@ function showPosts() {
   		markersArray.length = 0;
 
 		$.each(posts, function(id, post) {
-		 	//var color = post.harRegistert == true ? "green" : "red";
-		 	var color = "red";
+		 	var color = post.harRegistert == true ? "green" : "red";
+		 	//var color = "red";
 			var marker = new MarkerWithLabel({
 			   position: {lat: post.latitude, lng: post.longitude},
 		       map: map,
 		       draggable: false,
        		   raiseOnDrag: false,
-		       labelContent: post.poengVerdi + " poeng",
+		       labelContent: post.poengVerdi,
 		       labelAnchor: new google.maps.Point(22, 10),
 		       labelClass: "labels",
-		       labelStyle: {'color': 'red'} // 'opacity': '1.0',
+		       labelStyle: {'color': color} // 'opacity': '1.0',
 		    });
 		  	markersArray.push(marker);
 		});
@@ -81,8 +81,8 @@ function showPosts() {
 
 function watchPosition(position) {
 	currentPosition = position;
-	var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-	marker.setPosition(latlng);
+	//var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+	//marker.setPosition(latlng);
 
 	var positionString = "position: " + position.coords.latitude + ", " + position.coords.longitude;
 	debug(positionString);

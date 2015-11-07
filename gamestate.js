@@ -3,8 +3,6 @@ $(document).ready(function() {
 	setInterval(function(){ receiveGameState(); }, 3000);
 });
 
-var poster;
-var score;
 function receiveGameState() {
 	getFromServer(gameStateUrl, function(messages) {
 		//console.log(messages);
@@ -19,7 +17,7 @@ function receiveGameState() {
 		lagId = messages.lagId;
 		achievements = messages.achievements;
 
-		showPosts();
+		showPosts(poster);
 		showWeapons(vaapen);
 		//setInterval(function(){ showPosts(); }, 5000);
 		$('#poengsum').html(score);
