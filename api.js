@@ -1,4 +1,4 @@
-var teamId = "duppene_dupper_i_takt";
+﻿var teamId = "duppene_dupper_i_takt";
 var serverUrl = "https://bbr2015.azurewebsites.net/api/";
 var gameStateUrl = serverUrl + "GameStateFeed";
 var messageUrl = serverUrl + "Meldinger";

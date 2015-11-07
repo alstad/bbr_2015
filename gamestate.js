@@ -1,4 +1,4 @@
-$(document).ready(function() {
+﻿$(document).ready(function() {
 	receiveGameState();
 	setInterval(function(){ receiveGameState(); }, 3000);
 });
