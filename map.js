@@ -15,6 +15,12 @@ var icon = {
 		origin: new google.maps.Point(0,0),
 		anchor: new google.maps.Point(16, 7)
 };
+var takenIcon = {
+	url: 'markers/taken.png',
+	size: new google.maps.Size(32, 32),
+	origin: new google.maps.Point(0,0),
+	anchor: new google.maps.Point(16, 7)
+};
 var shape = {
 		coords: [18,0,18,1,18,2,18,3,18,4,18,5,19,8,19,9,19,10,19,11,19,12,19,13,19,14,19,15,19,16,19,17,17,18,17,19,24,20,26,21,28,22,29,23,29,24,29,25,29,26,29,27,29,28,28,29,26,30,24,31,7,31,5,30,3,29,2,28,2,27,2,26,2,25,2,24,2,23,3,22,5,21,7,20,14,19,14,18,12,17,12,16,12,15,12,14,12,13,12,12,12,11,12,10,12,9,12,8,13,5,13,4,13,3,13,2,13,1,13,0],
 		type: 'poly'
@@ -66,16 +72,31 @@ function showPosts(posts) {
 		$.each(posts, function(id, post) {
 		 	var color = post.harRegistert == true ? "green" : "red";
 		 	//var color = "red";
-			var marker = new MarkerWithLabel({
-			   position: {lat: post.latitude, lng: post.longitude},
-		       map: map,
-		       draggable: false,
-       		   raiseOnDrag: false,
-		       labelContent: post.poengVerdi,
-		       labelAnchor: new google.maps.Point(22, 10),
-		       labelClass: "labels",
-		       labelStyle: {'color': color} // 'opacity': '1.0',
-		    });
+			if (post.harRegistert) {
+				var marker = new MarkerWithLabel({
+					position: {lat: post.latitude, lng: post.longitude},
+					map: map,
+					icon: takenIcon,
+					shape: shape,
+					draggable: false,
+					raiseOnDrag: false,
+					labelContent: post.poengVerdi,
+					labelAnchor: new google.maps.Point(22, 10),
+					labelClass: "labels",
+					labelStyle: {'color': color} // 'opacity': '1.0',
+				});
+			} else {
+				var marker = new MarkerWithLabel({
+					position: {lat: post.latitude, lng: post.longitude},
+					map: map,
+					draggable: false,
+					raiseOnDrag: false,
+					labelContent: post.poengVerdi,
+					labelAnchor: new google.maps.Point(22, 10),
+					labelClass: "labels",
+					labelStyle: {'color': color} // 'opacity': '1.0',
+				});
+			}
 		  	markersArray.push(marker);
 		});
 	}
