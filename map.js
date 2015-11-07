@@ -28,7 +28,9 @@ $(document).ready(function() {
 var participantsArray = [];
 function receiveParticipantsPositions() {
 	getFromServer(positionUrl, function(participants) {
-		marker.setMap(null);
+		if (marker) {
+			marker.setMap(null);
+		}
 		for (var i = 0; i < participantsArray.length; i++ ) {
     		participantsArray[i].setMap(null);
   		}
