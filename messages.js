@@ -27,6 +27,7 @@ function receiveMessages() {
 	});
 }
 
+var snd = new Audio("pling.wav"); // buffers automatically when created
 function addMessageToLog(incoming, message, className, server) {
 	var append;
 	if (incoming) {
@@ -38,6 +39,7 @@ function addMessageToLog(incoming, message, className, server) {
 
 	if (!server) {
 		var log = '#message-log';
+		snd.play();
 	} else {
 		var log = '#server-log';
 	}
