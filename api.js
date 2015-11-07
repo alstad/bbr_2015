@@ -64,7 +64,9 @@ function getRealName(deltakerId) {
 		case "JAVA_3-2":
 			return "Scott";
 		case "JAVA_3-3":
-			return "Anders"
+			return "Anders";
+		case "JAVA_3-4":
+			return "Atle";
 		default:
 			return deltakerId;
 	}
