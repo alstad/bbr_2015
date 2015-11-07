@@ -1,4 +1,4 @@
-function showWeapons(weapons) {
+﻿function showWeapons(weapons) {
     //console.log("Weapons", messages.meldinger);
     $('#weapons').empty();
     if (weapons.length == 0) {
@@ -20,7 +20,7 @@ $("#postform").submit(function(event) {
     debug("PostKode: " + postCode);
     debug("VaapenId: " + vaapenId);
     if (vaapenId && vaapenId != "NONE") {
-        var json = {"postKode": postCode, "v&aring;pen": vaapenId};
+        var json = {"postKode": postCode, "våpen": vaapenId};
     } else {
         var json = {"postKode": postCode};
     }

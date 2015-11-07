@@ -1,4 +1,4 @@
-var lastMessageSeqNo;
+﻿var lastMessageSeqNo;
 var lastMessageReceived;
 
 $(document).ready(function() {
