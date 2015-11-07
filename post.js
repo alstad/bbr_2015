@@ -1,5 +1,6 @@
 ﻿function showWeapons(weapons) {
     //console.log("Weapons", messages.meldinger);
+    var selected = $('input:radio[name=vaapenId]:checked').val();
     $('#weapons').empty();
     if (weapons.length == 0) {
         $('#weapons').html("No weapons");
@@ -8,9 +9,12 @@
             console.log("Weapon: ", weapon);
             //$('#weapons').add("div");
             //$('#weapons').append("test");
-            $('#weapons').append("<input type=\"radio\" name=\"vaapenId\" value=\"" +weapon.vaapenId  +"\"> " +weapon.vaapenId +":" +weapon.beskrivelse +"<br>");
+            $('#weapons').append("<input type=\"radio\" name=\"vaapenId\" id=\"" + weapon.vaapenId  + "\" value=\"" +weapon.vaapenId  + "\"> " +weapon.vaapenId +":" +weapon.beskrivelse +"<br>");
         });
-        $('#weapons').append("<input type=\"radio\" name=\"vaapenId\" value=\"NONE\"> INGEN<br><p/>");
+        $('#weapons').append("<input type=\"radio\" name=\"vaapenId\" value=\"NONE\" value=\"NONE\"> INGEN<br><p/>");
+    }
+    if (selected) {
+        $("#" + selected).prop("checked", true);
     }
 }
 
