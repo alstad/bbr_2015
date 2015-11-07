@@ -15,23 +15,34 @@ function receiveMessages() {
 		$.each(messages.meldinger.reverse(), function(index, msg) {
 			//console.log("Message received: ", msg);
 			lastMessageSeqNo = msg.sekvens;
-			addMessageToLog(true, getRealName(msg.deltaker) +": " +msg.melding);
+			if (msg.deltaker.slice(0, "JAVA_3".length) == "JAVA_3") {
+				var server = false;
+			} else {
+				var server = true;
+			}
+			addMessageToLog(true, getRealName(msg.deltaker) +": " +msg.melding, msg.deltaker, server);
 			lastMessageReceived = msg.tidspunktUtc;
 			$('#lastMsgTimestamp').html(lastMessageReceived);
 		});
 	});
 }
 
-function addMessageToLog(incoming, message) {
+function addMessageToLog(incoming, message, className, server) {
 	var append;
 	if (incoming) {
 		$('.last-message').removeClass('last-message');
-		append = "<div class='last-message'>&gt; " + message + "</div>";
+		append = "<div class='last-message " + className + "'>&gt; " + message + "</div>";
 	} else {
-		append = "<div>&lt; " + message + "</div>";
+		append = "<div class='" + className + "'>&lt; " + message + "</div>";
 	}
-	var messageLog = $('#message-log').html();
-	$('#message-log').html(append + messageLog);
+
+	if (!server) {
+		var log = '#message-log';
+	} else {
+		var log = '#server-log';
+	}
+	var messageLog = $(log).html();
+	$(log).html(append + messageLog);
 }
 
 $("#messageform").submit(function(event) {
