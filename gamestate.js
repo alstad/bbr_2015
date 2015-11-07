@@ -1,14 +1,14 @@
 $(document).ready(function() {
-	console.log("Starting polling base server...");
-
-	receiveGameState()
-	setInterval(function(){ receiveGameState(); }, 5000);
+	receiveGameState();
+	setInterval(function(){ receiveGameState(); }, 3000);
 });
 
 var poster;
+var score;
 function receiveGameState() {
-	getFromServer(serverUrl + gameStateUrl, function(messages) {
-		console.log(messages);
+	getFromServer(gameStateUrl, function(messages) {
+		//console.log(messages);
+
 		lagNavn = messages.lagNavn;
 		poster = messages.poster;
 		score = messages.score;
@@ -23,6 +23,7 @@ function receiveGameState() {
 		showWeapons(vaapen);
 		//setInterval(function(){ showPosts(); }, 5000);
 		$('#poengsum').html(score);
+		$('#ranking').html(ranking.rank);
 	});
 }
 
