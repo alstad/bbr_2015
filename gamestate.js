@@ -24,7 +24,3 @@ function receiveGameState() {
 		$('#ranking').html(ranking.rank);
 	});
 }
-
-function getPosts() {
-	return poster;
-}
